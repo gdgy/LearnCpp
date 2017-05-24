@@ -8,6 +8,7 @@ public:
 	String();
 	~String();
 	String(const char*);
+	String(const String&);
 	String& operator=(const String&rhs);
 	friend std::ostream& operator<<(std::ostream& os, const String&);
 private:
@@ -21,6 +22,14 @@ String::String()
 	if (pstr != NULL)
 		*pstr = '\0';
 
+}
+
+String::String(const String& rhs)
+{
+	std::size_t len = strlen(rhs.pstr);
+	pstr = new char[len + 1];
+	if (pstr)
+		strcpy(pstr, rhs.pstr);
 }
 
 String::String(const char* str)
@@ -38,15 +47,12 @@ String::String(const char* str)
 
 String& String::operator=(const String&rhs)
 {
-	if (this == &rhs)
-		return *this;
-	std::size_t len = strlen(rhs.pstr);
-	char* tmp_pstr = new char[len + 1];
-	if (tmp_pstr != NULL)
+	if (this != &rhs)
 	{
-		strcpy(tmp_pstr, rhs.pstr);
-		delete[] pstr;
-		pstr = tmp_pstr;
+		String tmpString(rhs);
+		char* ptmpdata = tmpString.pstr;
+		tmpString.pstr = pstr;
+		pstr = ptmpdata;
 	}
 	return *this;
 }
@@ -64,6 +70,7 @@ String::~String()
 
 std::ostream& operator<<(std::ostream& os, const String& str)
 {
+	std::cout << "call String operator<<" << std::endl;
 	os << str.pstr;
 	return os;
 }
